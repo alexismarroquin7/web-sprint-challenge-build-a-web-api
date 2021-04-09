@@ -1,4 +1,5 @@
 const Action = require("../actions/actions-model");
+const Project = require("../projects/projects-model");
 
 const validateActionId = async (req, res, next) => {
   const { id } = req.params;
@@ -15,6 +16,22 @@ const validateActionId = async (req, res, next) => {
   }
 }
 
+const validateProjectId = async (req, res, next) => {
+  const { id } = req.params;
+  try {
+    const project = await Project.get(id);
+    if(!project){
+      res.status(404).json({ message: `No project with id: ${id} was found` });
+    } else {
+      req.project = project;
+      next();
+    }
+  } catch (err) {
+    next(err);
+  }
+}
+
 module.exports = {
-  validateActionId
+  validateActionId,
+  validateProjectId
 }
