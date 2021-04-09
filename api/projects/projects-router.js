@@ -27,11 +27,33 @@ router.post(`/`, mw.validateProjectBody, async (req, res, next) => {
   }
 });
 
+router.put(`/:id`, mw.validateProjectId, mw.validateProjectBody, async (req, res, next) => {
+  const { id } = req.params;
+  const changes = req.body;
+
+  try {
+    const updatedProject = await Project.update(id, changes);
+    res.status(200).json(updatedProject);
+  } catch (err) {
+    next(err);
+  }
+});
+
 router.delete(`/:id`, mw.validateProjectId, async (req, res, next) => {
   const { id } = req.params;
   try {
     const deletedProject = await Project.remove(id);
     res.status(200).json(deletedProject);
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.get(`/:id/actions`, mw.validateProjectId, async (req, res, next) => {
+  const { id } = req.params;
+  try {
+    const projectActions = await Project.getProjectActions(id);
+    res.status(200).json(projectActions);
   } catch (err) {
     next(err);
   }

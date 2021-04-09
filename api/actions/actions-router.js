@@ -27,7 +27,15 @@ router.post(`/`, mw.validateActionBody, mw.validateProjectId, async (req, res, n
   }
 });
 
-router.put(`/:id`, async (req, res) => {
+router.put(`/:id`, mw.validateActionBody, mw.validateActionId, async (req, res, next) => {
+  const { id } = req.params;
+  const changes = req.body;
+  try {
+    const updatedAction = await Action.update(id, changes);
+    res.status(200).json(updatedAction);
+  } catch (err) {
+    next(err);
+  }
 
 });
 
