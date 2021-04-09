@@ -17,11 +17,21 @@ router.get(`/:id`, mw.validateProjectId, async (req, res) => {
   res.status(200).json(req.project);
 });
 
-router.post(`/`, async (req, res, next) => {
+router.post(`/`, mw.validateProjectBody, async (req, res, next) => {
   const project = req.body;
   try {
     const newProject = await Project.insert(project);
     res.status(201).json(newProject);
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.delete(`/:id`, mw.validateProjectId, async (req, res, next) => {
+  const { id } = req.params;
+  try {
+    const deletedProject = await Project.remove(id);
+    res.status(200).json(deletedProject);
   } catch (err) {
     next(err);
   }

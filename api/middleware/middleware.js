@@ -19,7 +19,17 @@ const validateActionId = async (req, res, next) => {
 const validateActionBody = (req, res, next) => {
   const action = req.body;
   if(!action.project_id || !action.description || !action.notes){
-    res.status(400).json({ message: "Action requires project_id, description, && notes" })
+    res.status(400).json({ message: "project_id, description, && notes are required fields" })
+  } else {
+    next();
+  }
+}
+
+const validateProjectBody = (req, res, next) => {
+  const project = req.body;
+
+  if(!project.name || !project.description){
+    res.status(400).json({ message: "Name and description are required fields" });
   } else {
     next();
   }
@@ -48,6 +58,7 @@ const validateProjectId = async (req, res, next) => {
 
 module.exports = {
   validateActionId,
+  validateActionBody,
   validateProjectId,
-  validateActionBody
+  validateProjectBody
 }
