@@ -17,6 +17,16 @@ router.get(`/:id`, mw.validateProjectId, async (req, res) => {
   res.status(200).json(req.project);
 });
 
+router.post(`/`, async (req, res, next) => {
+  const project = req.body;
+  try {
+    const newProject = await Project.insert(project);
+    res.status(201).json(newProject);
+  } catch (err) {
+    next(err);
+  }
+});
+
 router.use((err, req, res) => {
   res.status(500).json({
     custom: "Something failed",

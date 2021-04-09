@@ -16,15 +16,30 @@ const validateActionId = async (req, res, next) => {
   }
 }
 
+const validateActionBody = (req, res, next) => {
+  const action = req.body;
+  if(!action.project_id || !action.description || !action.notes){
+    res.status(400).json({ message: "Action requires project_id, description, && notes" })
+  } else {
+    next();
+  }
+}
+
 const validateProjectId = async (req, res, next) => {
   const { id } = req.params;
   try {
-    const project = await Project.get(id);
-    if(!project){
-      res.status(404).json({ message: `No project with id: ${id} was found` });
-    } else {
+    if(!id){
+      const project = await Project.get(req.body.project_id);
       req.project = project;
       next();
+    } else {
+      const project = await Project.get(id);
+      if(!project){
+        res.status(404).json({ message: `No project with id: ${id} was found` });
+      } else {
+        req.project = project;
+        next();
+      }
     }
   } catch (err) {
     next(err);
@@ -33,5 +48,6 @@ const validateProjectId = async (req, res, next) => {
 
 module.exports = {
   validateActionId,
-  validateProjectId
+  validateProjectId,
+  validateActionBody
 }
